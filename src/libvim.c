@@ -11,18 +11,27 @@
 
 #include "vim.h"
 
+#ifdef EMSCRIPTEN
+#include "emscripten.h"
+#else
+#define EMSCRIPTEN_KEEPALIVE 
+#endif
+
+EMSCRIPTEN_KEEPALIVE
 buf_T *vimBufferLoad(char_u *ffname_arg, linenr_T lnum, int flags)
 {
   buf_T *buffer = buflist_new(ffname_arg, NULL, lnum, flags);
   return buffer;
 }
 
+EMSCRIPTEN_KEEPALIVE
 buf_T *vimBufferNew(int flags)
 {
   buf_T *buffer = buflist_new(NULL, NULL, 0, flags);
   return buffer;
 }
 
+EMSCRIPTEN_KEEPALIVE
 buf_T *vimBufferOpen(char_u *ffname_arg, linenr_T lnum, int flags)
 {
   buf_T *buffer = vimBufferLoad(ffname_arg, lnum, flags);
@@ -30,43 +39,61 @@ buf_T *vimBufferOpen(char_u *ffname_arg, linenr_T lnum, int flags)
   return buffer;
 }
 
+EMSCRIPTEN_KEEPALIVE
 int vimBufferCheckIfChanged(buf_T *buf)
 {
   return buf_check_timestamp(buf, 0);
 }
 
+EMSCRIPTEN_KEEPALIVE
 buf_T *vimBufferGetCurrent(void) { return curbuf; }
 
+EMSCRIPTEN_KEEPALIVE
 buf_T *vimBufferGetById(int id) { return buflist_findnr(id); }
 
+EMSCRIPTEN_KEEPALIVE
 char_u *vimBufferGetFilename(buf_T *buf) { return buf->b_ffname; }
+EMSCRIPTEN_KEEPALIVE
 char_u *vimBufferGetFiletype(buf_T *buf) { return buf->b_p_ft; }
 
+EMSCRIPTEN_KEEPALIVE
 void vimBufferSetCurrent(buf_T *buf) { set_curbuf(buf, DOBUF_SPLIT); }
 
+EMSCRIPTEN_KEEPALIVE
 int vimBufferGetId(buf_T *buf) { return buf->b_fnum; }
 
+EMSCRIPTEN_KEEPALIVE
 long vimBufferGetLastChangedTick(buf_T *buf) { return CHANGEDTICK(buf); }
 
+EMSCRIPTEN_KEEPALIVE
 int vimBufferGetModified(buf_T *buf) { return bufIsChanged(buf); }
 
+EMSCRIPTEN_KEEPALIVE
 int vimBufferGetModifiable(buf_T *buf) { return buf->b_p_ma; }
+EMSCRIPTEN_KEEPALIVE
 void vimBufferSetModifiable(buf_T *buf, int modifiable) { buf->b_p_ma = modifiable; }
 
+EMSCRIPTEN_KEEPALIVE
 int vimBufferGetFileFormat(buf_T *buf) { return get_fileformat(buf); }
+EMSCRIPTEN_KEEPALIVE
 void vimBufferSetFileFormat(buf_T *buf, int fileformat) { return set_fileformat_buf(buf, fileformat, OPT_LOCAL); }
 
+EMSCRIPTEN_KEEPALIVE
 int vimBufferGetReadOnly(buf_T *buf) { return buf->b_p_ro; }
+EMSCRIPTEN_KEEPALIVE
 void vimBufferSetReadOnly(buf_T *buf, int readonly) { buf->b_p_ro = readonly; }
 
+EMSCRIPTEN_KEEPALIVE
 char_u *vimBufferGetLine(buf_T *buf, linenr_T lnum)
 {
   char_u *result = ml_get_buf(buf, lnum, FALSE);
   return result;
 }
 
+EMSCRIPTEN_KEEPALIVE
 size_t vimBufferGetLineCount(buf_T *buf) { return buf->b_ml.ml_line_count; }
 
+EMSCRIPTEN_KEEPALIVE
 void vimBufferSetLines(buf_T *buf, linenr_T start, linenr_T end, char_u **lines, int count)
 {
   int originalLineCount = vimBufferGetLineCount(buf);
@@ -114,94 +141,114 @@ void vimBufferSetLines(buf_T *buf, linenr_T start, linenr_T end, char_u **lines,
   }
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimColorSchemeSetChangedCallback(ColorSchemeChangedCallback callback)
 {
   colorSchemeChangedCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimColorSchemeSetCompletionCallback(ColorSchemeCompletionCallback callback)
 {
   colorSchemeCompletionCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetBufferUpdateCallback(BufferUpdateCallback f)
 {
   bufferUpdateCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetAutoCommandCallback(AutoCommandCallback f)
 {
   autoCommandCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetCursorMoveScreenLineCallback(
     CursorMoveScreenLineCallback f)
 {
   cursorMoveScreenLineCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetCursorMoveScreenPositionCallback(
     CursorMoveScreenPositionCallback f)
 {
   cursorMoveScreenPositionCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetFileWriteFailureCallback(FileWriteFailureCallback f)
 {
   fileWriteFailureCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetAutoIndentCallback(AutoIndentCallback f)
 {
   autoIndentCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetMessageCallback(MessageCallback f)
 {
   messageCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetTerminalCallback(TerminalCallback f)
 {
   terminalCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetWindowSplitCallback(WindowSplitCallback f)
 {
   windowSplitCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetWindowMovementCallback(WindowMovementCallback f)
 {
   windowMovementCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetDirectoryChangedCallback(DirectoryChangedCallback f)
 {
   directoryChangedCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetOptionSetCallback(OptionSetCallback f)
 {
   optionSetCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetQuitCallback(QuitCallback f)
 {
   quitCallback = f;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetUnhandledEscapeCallback(VoidCallback callback)
 {
   unhandledEscapeCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 char_u vimCommandLineGetType(void) { return ccline.cmdfirstc; }
 
+EMSCRIPTEN_KEEPALIVE
 char_u *vimCommandLineGetText(void) { return ccline.cmdbuff; }
 
+EMSCRIPTEN_KEEPALIVE
 int vimCommandLineGetPosition(void) { return ccline.cmdpos; }
 
+EMSCRIPTEN_KEEPALIVE
 void vimCommandLineGetCompletions(char_u ***completions, int *count)
 {
 
@@ -220,11 +267,16 @@ void vimCommandLineGetCompletions(char_u ***completions, int *count)
   expand_cmdline(ccline.xpc, ccline.cmdbuff, ccline.cmdpos, count, completions);
 }
 
+EMSCRIPTEN_KEEPALIVE
 linenr_T vimCursorGetLine(void) { return curwin->w_cursor.lnum; };
+EMSCRIPTEN_KEEPALIVE
 colnr_T vimCursorGetColumn(void) { return curwin->w_cursor.col; };
+EMSCRIPTEN_KEEPALIVE
 pos_T vimCursorGetPosition(void) { return curwin->w_cursor; };
+EMSCRIPTEN_KEEPALIVE
 colnr_T vimCursorGetDesiredColumn(void) { return curwin->w_curswant; };
 
+EMSCRIPTEN_KEEPALIVE
 void vimCursorSetPosition(pos_T pos)
 {
   curwin->w_cursor.lnum = pos.lnum;
@@ -235,16 +287,19 @@ void vimCursorSetPosition(pos_T pos)
   curs_columns(TRUE);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimCursorSetColumnWant(colnr_T curswant)
 {
   curwin->w_curswant = curswant;
 }
 
+EMSCRIPTEN_KEEPALIVE
 colnr_T vimCursorGetColumnWant(void)
 {
   return curwin->w_curswant;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimInputCore(int should_replace_termcodes, char_u *input)
 {
   if (should_replace_termcodes)
@@ -287,37 +342,46 @@ void vimInputCore(int should_replace_termcodes, char_u *input)
   curs_columns(TRUE);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimInput(char_u *input)
 {
   vimInputCore(0 /*should_replace_termcodes*/, input);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimKey(char_u *key)
 {
   vimInputCore(1 /*should_replace_termcodes*/, key);
 }
 
+EMSCRIPTEN_KEEPALIVE
 int vimVisualIsActive(void) { return VIsual_active; }
 
+EMSCRIPTEN_KEEPALIVE
 int vimSelectIsActive(void) { return VIsual_select; }
 
+EMSCRIPTEN_KEEPALIVE
 int vimUndoSaveCursor(void)
 {
   return u_save_cursor();
 }
 
+EMSCRIPTEN_KEEPALIVE
 int vimUndoSaveRegion(linenr_T start_lnum, linenr_T end_lnum)
 {
   return u_save(start_lnum, end_lnum);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimUndoSync(int force)
 {
   u_sync(force);
 }
 
+EMSCRIPTEN_KEEPALIVE
 int vimVisualGetType(void) { return VIsual_mode; }
 
+EMSCRIPTEN_KEEPALIVE
 void vimVisualGetRange(pos_T *startPos, pos_T *endPos)
 {
   if (VIsual_active || VIsual_select)
@@ -332,6 +396,7 @@ void vimVisualGetRange(pos_T *startPos, pos_T *endPos)
   }
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimVisualSetStart(pos_T startPos)
 {
   if (VIsual_active || VIsual_select)
@@ -340,11 +405,13 @@ void vimVisualSetStart(pos_T startPos)
   }
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimVisualSetType(int visualType)
 {
   VIsual_mode = visualType;
 }
 
+EMSCRIPTEN_KEEPALIVE
 pos_T *vimSearchGetMatchingPair(int initc) { return findmatch(NULL, initc); }
 
 typedef struct shlNode_elem shlNode_T;
@@ -354,6 +421,7 @@ struct shlNode_elem
   shlNode_T *next;
 };
 
+EMSCRIPTEN_KEEPALIVE
 void vimSearchGetHighlights(linenr_T start_lnum, linenr_T end_lnum,
                             int *num_highlights,
                             searchHighlight_T **highlights)
@@ -438,15 +506,19 @@ void vimSearchGetHighlights(linenr_T start_lnum, linenr_T end_lnum,
   *highlights = ret;
 }
 
+EMSCRIPTEN_KEEPALIVE
 char_u *vimSearchGetPattern(void) { return get_search_pat(); }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetStopSearchHighlightCallback(VoidCallback callback)
 {
   stopSearchHighlightCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimExecute(char_u *cmd) { do_cmdline_cmd(cmd); }
 
+EMSCRIPTEN_KEEPALIVE
 void vimOptionSetTabSize(int tabSize)
 {
   curbuf->b_p_ts = tabSize;
@@ -454,16 +526,19 @@ void vimOptionSetTabSize(int tabSize)
   curbuf->b_p_sw = tabSize;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimMacroSetStartRecordCallback(MacroStartRecordCallback callback)
 {
   macroStartRecordCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimMacroSetStopRecordCallback(MacroStopRecordCallback callback)
 {
   macroStopRecordCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimOptionSetInsertSpaces(int insertSpaces)
 {
   curbuf->b_p_et = insertSpaces;
@@ -474,15 +549,22 @@ void vimOptionSetInsertSpaces(int insertSpaces)
   }
 }
 
+EMSCRIPTEN_KEEPALIVE
 int vimOptionGetTabSize() { return curbuf->b_p_ts; }
 
+EMSCRIPTEN_KEEPALIVE
 int vimOptionGetInsertSpaces(void) { return curbuf->b_p_et; }
 
+EMSCRIPTEN_KEEPALIVE
 int vimWindowGetWidth(void) { return curwin->w_width; }
+EMSCRIPTEN_KEEPALIVE
 int vimWindowGetHeight(void) { return curwin->w_height; }
+EMSCRIPTEN_KEEPALIVE
 int vimWindowGetTopLine(void) { return curwin->w_topline; }
+EMSCRIPTEN_KEEPALIVE
 int vimWindowGetLeftColumn(void) { return curwin->w_leftcol; }
 
+EMSCRIPTEN_KEEPALIVE
 void vimWindowSetTopLeft(int top, int left)
 {
   set_topline(curwin, top);
@@ -490,6 +572,7 @@ void vimWindowSetTopLeft(int top, int left)
   validate_botline();
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimWindowSetWidth(int width)
 {
   if (width > Columns)
@@ -501,6 +584,7 @@ void vimWindowSetWidth(int width)
   win_new_width(curwin, width);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimWindowSetHeight(int height)
 {
   if (height > Rows)
@@ -514,60 +598,73 @@ void vimWindowSetHeight(int height)
   win_comp_scroll(curwin);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetClipboardGetCallback(ClipboardGetCallback callback)
 {
   clipboardGetCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetToggleCommentsCallback(ToggleCommentsCallback callback)
 {
   toggleCommentsCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 int vimGetMode(void) { return get_real_state(); }
 
+EMSCRIPTEN_KEEPALIVE
 subMode_T vimGetSubMode(void) { return sm_get_current_sub_mode(); }
 
+EMSCRIPTEN_KEEPALIVE
 int vimGetPendingOperator(pendingOp_T *pendingOp)
 {
   return sm_get_pending_operator(pendingOp);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetClearCallback(ClearCallback callback)
 {
   clearCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetOutputCallback(OutputCallback callback)
 {
   outputCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetFormatCallback(FormatCallback callback)
 {
   formatCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetGotoCallback(GotoCallback callback)
 {
   gotoCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetTabPageCallback(TabPageCallback callback)
 {
   tabPageCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetDisplayIntroCallback(VoidCallback callback)
 {
   displayIntroCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetDisplayVersionCallback(VoidCallback callback)
 {
   displayVersionCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 char_u *vimEval(char_u *str)
 {
   char_u *copy = vim_strsave(str);
@@ -576,36 +673,43 @@ char_u *vimEval(char_u *str)
   return ret;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimRegisterGet(int reg_name, int *num_lines, char_u ***lines)
 {
   get_yank_register_value(reg_name, num_lines, lines);
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetFunctionGetCharCallback(FunctionGetCharCallback callback)
 {
   functionGetCharCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetInputMapCallback(InputMapCallback callback)
 {
   inputMapCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetInputUnmapCallback(InputUnmapCallback callback)
 {
   inputUnmapCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetScrollCallback(ScrollCallback callback)
 {
   scrollCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimSetYankCallback(YankCallback callback)
 {
   yankCallback = callback;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void vimInit(int argc, char **argv)
 {
   mparm_T params;

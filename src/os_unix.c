@@ -410,7 +410,7 @@ mch_total_mem(int special UNUSED)
     struct sysinfo sinfo;
 
     /* Linux way of getting amount of RAM available */
-    if (sysinfo(&sinfo) == 0)
+    if (0)
     {
 #ifdef HAVE_SYSINFO_MEM_UNIT
       /* avoid overflow as much as possible */
@@ -2773,12 +2773,6 @@ void mch_set_shellsize(void)
 {
   if (*T_CWS)
   {
-    /*
-	 * NOTE: if you get an error here that term_set_winsize() is
-	 * undefined, check the output of configure.  It could probably not
-	 * find a ncurses, termcap or termlib library.
-	 */
-    term_set_winsize((int)Rows, (int)Columns);
     screen_start(); /* don't know where cursor is now */
   }
 }

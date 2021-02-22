@@ -2008,56 +2008,6 @@ tltoa(unsigned long i)
 }
 #endif
 
-#ifndef HAVE_TGETENT
-
-/*
- * minimal tgoto() implementation.
- * no padding and we only parse for %i %d and %+char
- */
-static char *
-tgoto(char *cm, int x, int y)
-{
-  static char buf[30];
-  char *p, *s, *e;
-
-  if (!cm)
-    return "OOPS";
-  e = buf + 29;
-  for (s = buf; s < e && *cm; cm++)
-  {
-    if (*cm != '%')
-    {
-      *s++ = *cm;
-      continue;
-    }
-    switch (*++cm)
-    {
-    case 'd':
-      p = (char *)tltoa((unsigned long)y);
-      y = x;
-      while (*p)
-        *s++ = *p++;
-      break;
-    case 'i':
-      x++;
-      y++;
-      break;
-    case '+':
-      *s++ = (char)(*++cm + y);
-      y = x;
-      break;
-    case '%':
-      *s++ = *cm;
-      break;
-    default:
-      return "OOPS";
-    }
-  }
-  *s = '\0';
-  return buf;
-}
-
-#endif /* HAVE_TGETENT */
 
 /*
  * Set the terminal name and initialize the terminal options.
@@ -2135,22 +2085,18 @@ void out_str(char_u *s)
  */
 void term_windgoto(int row, int col)
 {
-  OUT_STR(tgoto((char *)T_CM, col, row));
 }
 
 void term_cursor_right(int i)
 {
-  OUT_STR(tgoto((char *)T_CRI, 0, i));
 }
 
 void term_append_lines(int line_count)
 {
-  OUT_STR(tgoto((char *)T_CAL, 0, line_count));
 }
 
 void term_delete_lines(int line_count)
 {
-  OUT_STR(tgoto((char *)T_CDL, 0, line_count));
 }
 
 #if defined(HAVE_TGETENT) || defined(PROTO)
@@ -2161,12 +2107,10 @@ void term_set_winpos(int x, int y)
     x = 0;
   if (y < 0)
     y = 0;
-  OUT_STR(tgoto((char *)T_CWP, y, x));
 }
 
 void term_set_winsize(int height, int width)
 {
-  OUT_STR(tgoto((char *)T_CWS, width, height));
 }
 #endif
 
@@ -2194,10 +2138,7 @@ term_color(char_u *s, int n)
                              : (n >= 16 ? "48;5;" : "10");
 
     sprintf(buf, format, lead, tail);
-    OUT_STR(tgoto(buf, 0, n >= 16 ? n : n - 8));
   }
-  else
-    OUT_STR(tgoto((char *)s, 0, n));
 }
 
 void term_fg_color(int n)
@@ -2607,11 +2548,6 @@ void cursor_off(void)
  */
 void scroll_region_set(win_T *wp, int off)
 {
-  OUT_STR(tgoto((char *)T_CS, W_WINROW(wp) + wp->w_height - 1,
-                W_WINROW(wp) + off));
-  if (*T_CSV != NUL && wp->w_width != Columns)
-    OUT_STR(tgoto((char *)T_CSV, wp->w_wincol + wp->w_width - 1,
-                  wp->w_wincol));
   screen_start(); /* don't know where cursor is now */
 }
 
@@ -2620,9 +2556,6 @@ void scroll_region_set(win_T *wp, int off)
  */
 void scroll_region_reset(void)
 {
-  OUT_STR(tgoto((char *)T_CS, (int)Rows - 1, 0));
-  if (*T_CSV != NUL)
-    OUT_STR(tgoto((char *)T_CSV, (int)Columns - 1, 0));
   screen_start(); /* don't know where cursor is now */
 }
 

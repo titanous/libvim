@@ -2548,65 +2548,6 @@ AC_TRY_COMPILE([
 	AC_MSG_RESULT(no))
 
 olibs="$LIBS"
-AC_MSG_CHECKING(--with-tlib argument)
-AC_ARG_WITH(tlib, [  --with-tlib=library     terminal library to be used ],)
-if test -n "$with_tlib"; then
-  AC_MSG_RESULT($with_tlib)
-  LIBS="$LIBS -l$with_tlib"
-  AC_MSG_CHECKING(for linking with $with_tlib library)
-  AC_TRY_LINK([], [], AC_MSG_RESULT(OK), AC_MSG_ERROR(FAILED))
-  dnl Need to check for tgetent() below.
-  olibs="$LIBS"
-else
-  AC_MSG_RESULT([empty: automatic terminal library selection])
-  dnl  On HP-UX 10.10 termcap or termlib should be used instead of
-  dnl  curses, because curses is much slower.
-  dnl  Newer versions of ncurses are preferred over anything, except
-  dnl  when tinfo has been split off, it contains all we need.
-  dnl  Older versions of ncurses have bugs, get a new one!
-  dnl  Digital Unix (OSF1) should use curses (Ronald Schild).
-  dnl  On SCO Openserver should prefer termlib (Roger Cornelius).
-  case "`uname -s 2>/dev/null`" in
-	OSF1|SCO_SV)	tlibs="tinfo ncurses curses termlib termcap";;
-	*)	tlibs="tinfo ncurses termlib termcap curses";;
-  esac
-  for libname in $tlibs; do
-    AC_CHECK_LIB(${libname}, tgetent,,)
-    if test "x$olibs" != "x$LIBS"; then
-      dnl It's possible that a library is found but it doesn't work
-      dnl e.g., shared library that cannot be found
-      dnl compile and run a test program to be sure
-      AC_TRY_RUN([
-#ifdef HAVE_TERMCAP_H
-# include <termcap.h>
-#endif
-#if STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#endif
-main() {char *s; s=(char *)tgoto("%p1%d", 0, 1); exit(0); }],
-			  res="OK", res="FAIL", res="FAIL")
-      if test "$res" = "OK"; then
-	break
-      fi
-      AC_MSG_RESULT($libname library is not usable)
-      LIBS="$olibs"
-    fi
-  done
-  if test "x$olibs" = "x$LIBS"; then
-    AC_MSG_RESULT(no terminal library found)
-  fi
-fi
-
-if test "x$olibs" = "x$LIBS"; then
-  AC_MSG_CHECKING([for tgetent()])
-  AC_TRY_LINK([],
-      [char s[10000]; int res = tgetent(s, "thisterminaldoesnotexist");],
-	AC_MSG_RESULT(yes),
-	AC_MSG_ERROR([NOT FOUND!
-      You need to install a terminal library; for example ncurses.
-      Or specify the name of the library with --with-tlib.]))
-fi
 
 AC_CACHE_CHECK([whether we talk terminfo], [vim_cv_terminfo],
   [

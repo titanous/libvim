@@ -1232,7 +1232,7 @@ NO_ATTR=
 PROTO_FLAGS = -d -E"$(CPP)" $(NO_ATTR)
 
 
-WARN_FLAGS = -Wall -Wno-array-bounds -Wno-unknown-warning-option -Wno-cpp -Wno-pointer-sign -Wno-unused-parameter -Wno-strict-overflow -Wno-return-type -Werror
+WARN_FLAGS = -Wall -Wno-array-bounds -Wno-unknown-warning-option -Wno-cpp -Wno-pointer-sign -Wno-unused-parameter -Wno-strict-overflow -Wno-return-type -Wno-implicit-const-int-float-conversion -Wno-unused-but-set-variable -Werror
 
 ################################################
 ##   no changes required below this line      ##
@@ -1752,6 +1752,10 @@ $(VIMTARGET): auto/config.mk objects $(OBJ) version.c version.h
 libvim.a: $(OBJ) libvim.c
 	$(CCC) version.c -o objects/version.o
 	$(AR) rcs libvim.a $(OBJ)
+
+libvim.html: $(OBJ) libvim.c
+	$(CCC) version.c -o objects/version.o
+	$(CC) -O2 $(OBJ) -o libvim.html
 
 xxd/xxd$(EXEEXT): xxd/xxd.c
 	cd xxd; CC="$(CC)" CFLAGS="$(CPPFLAGS) $(CFLAGS)" LDFLAGS="$(LDFLAGS)" \

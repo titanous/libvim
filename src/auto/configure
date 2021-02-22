@@ -737,6 +737,7 @@ infodir
 docdir
 oldincludedir
 includedir
+runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -798,7 +799,6 @@ enable_rightleft
 enable_arabic
 enable_farsi
 with_x
-with_tlib
 enable_largefile
 enable_acl
 enable_gpm
@@ -853,6 +853,7 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
+runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE}'
@@ -1105,6 +1106,15 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -runstatedir | --runstatedir | --runstatedi | --runstated \
+  | --runstate | --runstat | --runsta | --runst | --runs \
+  | --run | --ru | --r)
+    ac_prev=runstatedir ;;
+  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+  | --run=* | --ru=* | --r=*)
+    runstatedir=$ac_optarg ;;
+
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1242,7 +1252,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir
+		libdir localedir mandir runstatedir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1395,6 +1405,7 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1476,7 +1487,6 @@ Optional Packages:
   --with-python3-config-dir=PATH  Python's config directory (deprecated)
   --with-ruby-command=RUBY  name of the Ruby command (default: ruby)
   --with-x                use the X Window System
-  --with-tlib=library     terminal library to be used
 
 Some influential environment variables:
   CC          C compiler command
@@ -9829,159 +9839,6 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 olibs="$LIBS"
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking --with-tlib argument" >&5
-$as_echo_n "checking --with-tlib argument... " >&6; }
-
-# Check whether --with-tlib was given.
-if test "${with_tlib+set}" = set; then :
-  withval=$with_tlib;
-fi
-
-if test -n "$with_tlib"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_tlib" >&5
-$as_echo "$with_tlib" >&6; }
-  LIBS="$LIBS -l$with_tlib"
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for linking with $with_tlib library" >&5
-$as_echo_n "checking for linking with $with_tlib library... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: OK" >&5
-$as_echo "OK" >&6; }
-else
-  as_fn_error $? "FAILED" "$LINENO" 5
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-    olibs="$LIBS"
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: empty: automatic terminal library selection" >&5
-$as_echo "empty: automatic terminal library selection" >&6; }
-                case "`uname -s 2>/dev/null`" in
-	OSF1|SCO_SV)	tlibs="tinfo ncurses curses termlib termcap";;
-	*)	tlibs="tinfo ncurses termlib termcap curses";;
-  esac
-  for libname in $tlibs; do
-    as_ac_Lib=`$as_echo "ac_cv_lib_${libname}''_tgetent" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for tgetent in -l${libname}" >&5
-$as_echo_n "checking for tgetent in -l${libname}... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-l${libname}  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char tgetent ();
-int
-main ()
-{
-return tgetent ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
-else
-  eval "$as_ac_Lib=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_LIB${libname}" | $as_tr_cpp` 1
-_ACEOF
-
-  LIBS="-l${libname} $LIBS"
-
-fi
-
-    if test "x$olibs" != "x$LIBS"; then
-                        if test "$cross_compiling" = yes; then :
-  res="FAIL"
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#ifdef HAVE_TERMCAP_H
-# include <termcap.h>
-#endif
-#if STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#endif
-main() {char *s; s=(char *)tgoto("%p1%d", 0, 1); exit(0); }
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-  res="OK"
-else
-  res="FAIL"
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-      if test "$res" = "OK"; then
-	break
-      fi
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libname library is not usable" >&5
-$as_echo "$libname library is not usable" >&6; }
-      LIBS="$olibs"
-    fi
-  done
-  if test "x$olibs" = "x$LIBS"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no terminal library found" >&5
-$as_echo "no terminal library found" >&6; }
-  fi
-fi
-
-if test "x$olibs" = "x$LIBS"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for tgetent()" >&5
-$as_echo_n "checking for tgetent()... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-char s[10000]; int res = tgetent(s, "thisterminaldoesnotexist");
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  as_fn_error $? "NOT FOUND!
-      You need to install a terminal library; for example ncurses.
-      Or specify the name of the library with --with-tlib." "$LINENO" 5
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we talk terminfo" >&5
 $as_echo_n "checking whether we talk terminfo... " >&6; }
@@ -10754,7 +10611,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -10800,7 +10657,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -10824,7 +10681,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -10869,7 +10726,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -10893,7 +10750,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
